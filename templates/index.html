@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<title>IUDC - XLSX Converter</title>
+{% endblock %}
+
+{% block body %}
+<h1>IUDC - XLSX Converter</h1>
+<form method="POST" action="{{ url_for('index') }}" enctype="multipart/form-data">
+    <label for="upload_type">Select upload type:</label>
+    <select name="upload_type" id="upload_type" onchange="toggleUploadType()" required>
+        <option value="file">Single File</option>
+        <option value="folder">Folder</option>
+    </select>
+    <br><br>
+    <div id="file_upload">
+        <label for="file">Select Excel file:</label>
+        <input type="file" name="file" id="file" accept=".xlsx">
+    </div>
+    <div id="folder_upload" style="display: none;">
+        <label for="folder">Select Folder:</label>
+        <input type="file" name="folder" id="folder" webkitdirectory directory multiple>
+    </div>
+    <br><br>
+    <label for="file_type">Select file type:</label>
+    <select name="file_type" id="file_type" required>
+        <option value="Estudiantes Activos">Estudiantes Activos</option>
+        <option value="Estudiantes Moodle">Estudiantes Moodle</option>
+    </select>
+    <br><br>
+    <input type="submit" value="Process Files">
+</form>
+
+{% if uploaded_file %}
+<h2>Uploaded File:</h2>
+<p>{{ uploaded_file }}</p>
+<form method="POST" action="{{ url_for('delete_file') }}">
+    <input type="hidden" name="filename" value="{{ uploaded_file }}">
+    <input type="submit" value="Delete File">
+</form>
+{% endif %}
+
+{% if error %}
+<p style="color: red;">{{ error }}</p>
+{% endif %}
+
+{% if log %}
+<h2>Processing Log:</h2>
+<ul>
+{% for entry in log %}
+    <li>{{ entry }}</li>
+{% endfor %}
+</ul>
+{% endif %}
+
+<script>
+function toggleUploadType() {
+    var uploadType = document.getElementById('upload_type').value;
+    var fileUpload = document.getElementById('file_upload');
+    var folderUpload = document.getElementById('folder_upload');
+    
+    if (uploadType === 'file') {
+        fileUpload.style.display = 'block';
+        folderUpload.style.display = 'none';
+    } else {
+        fileUpload.style.display = 'none';
+        folderUpload.style.display = 'block';
+    }
+}
+</script>
+{% endblock %}
